@@ -1,6 +1,6 @@
 const express = require("express");
 const apiRouter = require("./routes");
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
 const app = express();
 

@@ -11,11 +11,12 @@ const poolDb = mysql.createPool({
 
 let postsDb = {};
 
+
 postsDb.getAllPosts = () => {
   return new Promise((resolve, reject) => {
-    poolDb.query("SELECT * FROM posts", (err, results) => {
+    poolDb.query(`SELECT * FROM posts`, (err, results) => {
       if (err) {
-        reject(err);
+        return reject(err);
       }
       return resolve(results);
     });
@@ -27,21 +28,6 @@ postsDb.putPost = (caption, picture_url, user_id) => {
     poolDb.query(
       "INSERT INTO posts (post_id, user_id, caption, picture_url, vote, time_posted) VALUES (NULL, ?, ?,?,?,current_timestamp())",
       [user_id, caption, picture_url, 0, time_posted],
-      (err, results) => {
-        if (err) {
-          reject(err);
-        }
-        return resolve(results);
-      }
-    );
-  });
-};
-
-postsDb.getAllPosts = (id) => {
-  return new Promise((resolve, reject) => {
-    poolDb.query(
-      "SELECT * FROM posts WHERE post_id=?",
-      [id],
       (err, results) => {
         if (err) {
           reject(err);
