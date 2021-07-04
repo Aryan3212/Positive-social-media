@@ -23,6 +23,15 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+router.post("/signup/submit", async (req, res, next) => {
+  try {
+    let results = await db.putUser(req.body);
+    return res.json(results);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+});
 
 router.put("/:id", async (req, res, next) => {
   try {

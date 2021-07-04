@@ -11,7 +11,6 @@ const poolDb = mysql.createPool({
 
 let postsDb = {};
 
-
 postsDb.getAllPosts = () => {
   return new Promise((resolve, reject) => {
     poolDb.query(`SELECT * FROM posts`, (err, results) => {
@@ -23,11 +22,11 @@ postsDb.getAllPosts = () => {
   });
 };
 
-postsDb.putPost = (caption, picture_url, user_id) => {
+postsDb.createPost = (caption, picture_url, user_id) => {
   return new Promise((resolve, reject) => {
     poolDb.query(
       "INSERT INTO posts (post_id, user_id, caption, picture_url, vote, time_posted) VALUES (NULL, ?, ?,?,?,current_timestamp())",
-      [user_id, caption, picture_url, 0, time_posted],
+      [user_id, caption, picture_url, 0],
       (err, results) => {
         if (err) {
           reject(err);
@@ -38,7 +37,7 @@ postsDb.putPost = (caption, picture_url, user_id) => {
   });
 };
 
-postsDb.putUser = (name, username, user_id, passwordHash) => {
+postsDb.signUpUser = ({ name, username, user_id, password }) => {
   return new Promise((resolve, reject) => {
     poolDb.query(
       "INSERT INTO users (user_id, name, username) VALUES (?, ?, ?)",
@@ -47,12 +46,12 @@ postsDb.putUser = (name, username, user_id, passwordHash) => {
         if (err) {
           reject(err);
         }
-        return resolve(results);
+        return resolve("SIGN UP SUCCESSFUL");
       }
     );
     poolDb.query(
       "INSERT INTO login (user_id, hash) VALUES (?, MD5(?))",
-      [user_id, passwordHash],
+      [user_id, password],
       (err, results) => {
         if (err) {
           reject(err);
@@ -63,11 +62,47 @@ postsDb.putUser = (name, username, user_id, passwordHash) => {
   });
 };
 
-postsDb.patchVotePost = (voted_user_id, post_id) => {
+postsDb.incrementVotePost = (voted_user_id, post_id) => {
   return new Promise((resolve, reject) => {
     poolDb.query(
       "INSERT INTO voted (voted_user_id, post_id) VALUES (?,?)",
       voted_user_id,
+      post_id,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        }
+        return resolve(results);
+      }
+    );
+    poolDb.query(
+      "UPDATE posts SET vote = vote + 1 WHERE post_id = ?",
+      post_id,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+postsDb.decrementVotePost = (voted_user_id, post_id) => {
+  return new Promise((resolve, reject) => {
+    poolDb.query(
+      "DELETE FROM voted WHERE voted_user_id = ? AND post_id = ?",
+      voted_user_id,
+      post_id,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        }
+        return resolve(results);
+      }
+    );
+    poolDb.query(
+      "UPDATE posts SET vote = vote - 1 WHERE post_id = ?",
       post_id,
       (err, results) => {
         if (err) {
