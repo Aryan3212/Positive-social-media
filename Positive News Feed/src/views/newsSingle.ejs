@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Positive Newsfeed</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200&display=swap" rel="stylesheet"> 
+    
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">Positive Newsfeed</div>
+        <%- include('./partials/search.ejs') %>
+    </header>
+
+    <div class="wrapper">
+        <div class="news-single">
+            <a href="/">&larr;- Back</a>
+            <% if(article != null) { %> 
+                <h2><%- article.caption %></h2>
+                <img src="<%- article.picture_url %>" alt="<%- article.caption %>">
+                <h3>Votes:<%- article.vote %></h3>
+                <p><%- article.time_posted %></p>
+                
+            <% } else{ %> 
+                <a href="/">Home</a>
+                No Posts Found.
+            <% } %> 
+        </div>
+    </div>
+
+
+</body>
+</html>
