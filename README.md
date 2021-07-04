@@ -19,11 +19,17 @@ Run the backend of the project in the root folder with the command:
 
 `` npm run dev ``
 
-This will spin the backend server and REST API for the feed.
+This will spin the backend server and REST API for the feed at https://localhost:3001.
 
+To run the frontend, change directory the 'client' folder. 
+
+Type in the following command:
+
+`` npm start ``
+
+This will spin the frontend for the feed at https://localhost:5000.
 
 Currently, only the RESTful API has been implemented that can query the necessary info from the database.
-
 
 
 Our progress:
