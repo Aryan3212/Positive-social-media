@@ -3,11 +3,16 @@ const newsRouter = express.Router();
 const axios = require("axios");
 const bcrypt = require("bcrypt");
 
+const fs = require("fs");
+
+const multer = require("multer");
+
+
 const users = [];
 
 newsRouter.get("", async (req, res) => {
   try {
-    const newsAPI = await axios.get(`http://localhost:3001/api/posts`);
+    const newsAPI = await axios.get(`http://localhost:3001/api/`);
     res.render("news", { articles: newsAPI.data });
   } catch (err) {
     if (err.response) {
@@ -29,9 +34,7 @@ newsRouter.get("/:id", async (req, res) => {
   let articleID = req.params.id;
 
   try {
-    const newsAPI = await axios.get(
-      `http://localhost:3001/api/posts/${articleID}`
-    );
+    const newsAPI = await axios.get(`http://localhost:3001/api/${articleID}`);
     res.render("newsSingle", { article: newsAPI.data });
   } catch (err) {
     if (err.response) {
@@ -53,9 +56,7 @@ newsRouter.post("", async (req, res) => {
   let search = req.body.search;
 
   try {
-    const newsAPI = await axios.get(
-      `http://localhost:3001/api/posts/${search}`
-    );
+    const newsAPI = await axios.get(`http://localhost:3001/api/${search}`);
     res.render("newsSearch", { articles: newsAPI.data });
   } catch (err) {
     if (err.response) {
@@ -80,6 +81,8 @@ newsRouter.get("/auth/:method?", function (req, res, next) {
     res.render("auth", { method: "login" });
   } else if (req.params.method == "signup" || req.params.method == "register") {
     res.render("auth", { method: "signup" });
+  } else if (req.params.method == "createpost") {
+    res.render("auth", { method: "createpost" });
   }
 });
 
@@ -87,16 +90,27 @@ newsRouter.post("/auth/:method?", async function (req, res, next) {
   if (req.params.method == "login" || req.params.method == "signin") {
   } else if (req.params.method == "signup" || req.params.method == "register") {
     try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      users.push({
-        name: req.body.text,
-        password: hashedPassword,
-      });
       res.redirect("/login");
     } catch {
       res.redirect("/signup");
     }
     console.dir(users);
+  } else if (req.params.method == "createpost"){
+    var storage = multer.diskStorage({
+      destination: function (req, file, callback) {
+        var dir = "./images";
+
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir);
+        }
+        callback(null, dir);
+      },
+
+      filename: function (req, file, callback) {
+        callback(null, file.originalname);
+      },
+    });
+    var upload = multer({ storage: storage }).array("files", 1);
   }
 });
 

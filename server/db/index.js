@@ -1,5 +1,10 @@
 const mysql = require("mysql");
 
+const fs = require("fs");
+
+const multer = require("multer");
+
+
 const poolDb = mysql.createPool({
   connectionLimit: 10,
   password: "rootismypassword",
@@ -13,12 +18,15 @@ let postsDb = {};
 
 postsDb.getAllPosts = () => {
   return new Promise((resolve, reject) => {
-    poolDb.query(`SELECT * FROM posts`, (err, results) => {
-      if (err) {
-        return reject(err);
+    poolDb.query(
+      `SELECT *  FROM posts AS p INNER JOIN users AS u ON p.user_id = u.user_id`,
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
       }
-      return resolve(results);
-    });
+    );
   });
 };
 
@@ -126,5 +134,23 @@ postsDb.decrementVotePost = (voted_user_id, post_id) => {
     );
   });
 };
+
+var storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    var dir = "./images";
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    callback(null, dir);
+  },
+
+  filename: function (req, file, callback) {
+    console.log(file.originalname);
+    callback(null, file.originalname);
+  },
+});
+
+var upload = multer({ storage: storage }).array("files", 1);
 
 module.exports = postsDb;
