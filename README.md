@@ -15,7 +15,12 @@ from this repo and make a copy of it on your machine.
 Note that you must have a MySQL database running on port 3306 to run the app. Before importing the positivitea.sql file, make a new database named
 'positivitea' in MySQL and then import the file.
 
-The database contains the following tables.
+Run the backend of the project in the root folder with the command:
+
+`` npm run dev ``
+
+This will spin the backend server and REST API for the feed.
+
 
 Currently, only the RESTful API has been implemented that can query the necessary info from the database.
 
