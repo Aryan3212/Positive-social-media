@@ -62,12 +62,26 @@ postsDb.signUpUser = ({ name, username, user_id, password }) => {
   });
 };
 
+postsDb.showVotesPost = (post_id) => {
+  return new Promise((resolve, reject) => {
+    poolDb.query(
+      "SELECT vote FROM posts WHERE post_id = ?",
+      post_id,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
 postsDb.incrementVotePost = (voted_user_id, post_id) => {
   return new Promise((resolve, reject) => {
     poolDb.query(
       "INSERT INTO voted (voted_user_id, post_id) VALUES (?,?)",
-      voted_user_id,
-      post_id,
+      [voted_user_id, post_id],
       (err, results) => {
         if (err) {
           reject(err);
@@ -92,8 +106,7 @@ postsDb.decrementVotePost = (voted_user_id, post_id) => {
   return new Promise((resolve, reject) => {
     poolDb.query(
       "DELETE FROM voted WHERE voted_user_id = ? AND post_id = ?",
-      voted_user_id,
-      post_id,
+      [voted_user_id, post_id],
       (err, results) => {
         if (err) {
           reject(err);

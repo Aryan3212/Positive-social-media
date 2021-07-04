@@ -13,9 +13,20 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+// router.get("/:id", async (req, res, next) => {
+//   try {
+//     let results = await db.getPost(req.params.id);
+//     res.json(results);
+//   } catch (e) {
+//     console.log(e);
+//     res.sendStatus(500);
+//   }
+// });
+
+router.get("/votes/", async (req, res, next) => {
   try {
-    let results = await db.getPost(req.params.id);
+    console.dir(req.query.post_id);
+    let results = await db.showVotesPost(req.query.post_id);
     res.json(results);
   } catch (e) {
     console.log(e);
@@ -25,7 +36,28 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/signup/submit", async (req, res, next) => {
   try {
-    let results = await db.putUser(req.body);
+    let results = await db.signUpUser(req.body);
+    return res.json(results);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+});
+
+router.post("/upvote/", async (req, res, next) => {
+  try {
+    console.log(req.query.post_id);
+    await db.incrementVotePost(1, req.query.post_id);
+    return res.json("INCREMENTED");
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+});
+
+router.post("/downvote/", async (req, res, next) => {
+  try {
+    let results = await db.decrementVotePost("1", req.query.post_id);
     return res.json(results);
   } catch (e) {
     console.log(e);
