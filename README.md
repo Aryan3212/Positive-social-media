@@ -5,6 +5,8 @@ You can only 'vote' on a post, which means nobody can react HaHa on your profile
 
 Nobody can comment, so you don't have to worry about rude comments.
 
+Link to the video demonstration: https://youtu.be/m4Ahj0dOdbI
+
 Clone the repo using
 
 `` git clone https://github.com/Aryan3212/Positive-social-media.git ``
